@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const prom = require('fs').promises
 /* These three things make asynchronous javascript possible
 1. callback function: A function used as  an arguement to another function. This arguement
@@ -55,3 +56,64 @@ async function writeToJson(){
     }
 }
 writeToJson()
+
+// appending to a file using the sync await
+async function appending(n) {
+    try {
+        await prom.appendFile('example.txt',n,'utf8')
+    } catch (error) {
+        return error.message
+    }
+}
+// console.log(appending("I am being appended to the example.txt"))
+
+// delete a file using the async/ await
+async function removing(n) {
+    try {
+        await prom.unlink(n)
+        // await prom.unlink('notNeeded.js')
+    } catch (error) {
+        return error.message
+    }
+}
+console.log(removing('anotherNotNeeded.js'))
+
+// removing a folder using async/await
+
+async function removingDir() {
+    try {
+        await prom.rm('win',{force:true, recursive:true})
+        /*
+1.recursive:true=> This ensures it removes both the folder and its subfolders 
+and files
+2. force:true=> This makes the fs.rmdir() method to run without error should the 
+folder is missing
+        */
+    } catch (error) {
+        return error.message
+    }
+}
+console.log(removingDir())
+
+// renaming a file using the async/await
+async function renamingFile(o,n) {
+    try {
+        await prom.rename(o,n)
+    } catch (err) {
+        return err.message
+    }
+}
+console.log(renamingFile('new.js','November.js'))
+// Moving a file from a source to a destination folder using async/await
+async function moving() {
+    const oldFile = 'November.js'
+    const folding = 'folding'
+    const newFolding = path.join(folding,'file.txt')
+    try {
+        await prom.mkdir(folding,{recursive:true}) // create folder if it doesn't exist
+       await prom.rename(oldFile,newFolding)
+    } catch (error) {
+        return error.message
+    }
+}
+console.log(moving())
